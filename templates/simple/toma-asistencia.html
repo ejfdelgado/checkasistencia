@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block content %}
+
+<form name="form-crear" class="panel panel-default">
+  <div class="panel-heading">Registro asistencia</div>
+  <div class="panel-body nopadding">
+	  <div class="col-xs-12 nopadding">
+	  
+	  	<div class="form-group col-xs-6">
+		  <label >Tipo Identificación:</label>
+		  <select class="form-control" id="tipoIdent">
+		  	<option value="CC">Cédula de ciudadanía</option>
+		    <option value="CE">Cédula de extranjería</option>
+		    <option value="SC">Salvoconducto</option>
+		    <option value="TI">Tarjeta de identidad</option>
+		  </select>
+		  <ul></ul>
+		</div>
+	  
+	  	<div class="form-group col-xs-6">
+		  <label >Cédula:</label>
+		  <input type="number" class="form-control" id="cedula">
+		  <ul></ul>
+		</div>
+	  </div>
+	  
+	  <div class="form-group col-xs-12 nopadding">
+	  	<div class="form-group col-sm-6 col-xs-12">
+	  		<button type="button" class="btn btn-success col-xs-12 accion_registro">Enviar</button>
+	  	</div>
+	  	<div class="form-group col-sm-6 col-xs-12">
+	  		<button type="button" class="btn btn-info col-xs-12 accion_nuevo">Soy Nuevo</button>
+	  	</div>
+	  </div>
+  </div>
+</form>
+{% endblock %}

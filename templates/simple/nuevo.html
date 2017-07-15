@@ -1,0 +1,296 @@
+{% extends "base.html" %}
+{% block content %}
+
+ <div class="un-hijo col-xs-12 nopadding ejemplo-hijos invisible">
+  <div class="col-xs-12 nopadding">
+  	<div class="form-group col-xs-5 col-sm-6">
+	  <label>Nombres:</label>
+	  <input type="text" class="form-control hijo nombres">
+	  <ul></ul>
+	</div>
+  	<div class="form-group col-xs-5 col-sm-5">
+  		<label>Fecha Nacimiento:</label>
+	  	<div class="input-group date hijo cumpleanios">
+	      <input type='text' class="form-control invisible"/>
+	      <p class="form-control"></p>
+	      <span class="input-group-addon">
+	          <span class="glyphicon glyphicon-calendar"></span>
+	      </span>
+	     </div>
+	     <ul></ul>
+  	</div>
+	<div class="col-xs-2 col-sm-1">
+		<button type="button" class="btn btn-danger pull-right accion_quitar_hijo quitarenreporte"><i class="fa fa-times fa-lg"></i></button>
+	</div>
+  </div>
+ </div>
+
+
+<form name="form-crear" class="panel panel-default incluirreporte">
+  <div class="panel-heading quitarenreporte">Bienvenido!</div>
+  <div class="panel-body nopadding">
+	{% csrf_token %}
+	<div class="text-center col-xs-12">
+		<div class="text-center col-xs-12">
+			<img id="previewFotoPersona" src="/assets/img/profileCouple.jpg" alt="Tu fotografía" class="img-responsive img-rounded center-block" />
+			<input type="file" class="invisible" name="pic" id="fotopersona" accept="image/*">
+		</div>
+		<div class="clearfix"><br/>&nbsp;<br/></div>
+	</div>
+
+  <div class="col-xs-12 nopadding">
+  	<div class="form-group col-xs-6">
+	  <label >Tipo Identificación:</label>
+	  <select class="form-control" id="tipoIdent">
+	  	<option value="CC">Cédula de ciudadanía</option>
+	    <option value="CE">Cédula de extranjería</option>
+	    <option value="SC">Salvoconducto</option>
+	    <option value="PA">Pasaporte</option>
+	  </select>
+	  <ul></ul>
+	</div>
+  	<div class="form-group col-xs-6">
+	  <label >Identificación:</label>
+	  <input type="number" class="form-control" id="cedula">
+	  <ul></ul>
+	</div>
+  </div>
+  
+  <div class="col-xs-12 nopadding">
+  	<div class="form-group col-xs-6">
+	  <label >Apellidos:</label>
+	  <input type="text" class="form-control" id="apellidos">
+	  <ul></ul>
+	</div>
+	<div class="form-group col-xs-6">
+	  <label >Nombres:</label>
+	  <input type="text" class="form-control" id="nombres">
+	  <ul></ul>
+	</div>
+  </div>
+  
+  <div class="col-xs-12 nopadding">
+  	<div class="form-group col-xs-12 col-md-6">
+      <label >Fecha Nacimiento:</label>
+      <div class="input-group date" id='nacimiento'>
+	      <input type='text' class="form-control invisible" />
+	      <p class="form-control"></p>
+	      <span class="input-group-addon">
+	          <span class="glyphicon glyphicon-calendar"></span>
+	      </span>
+      </div>
+      <ul></ul>
+  	</div>
+	<div class="form-group col-xs-12 col-md-6">
+	  <label >Ocupación:</label>
+	  <input type="text" class="form-control" id="ocupacion"/>
+	  <ul></ul>
+	</div>
+  </div>
+  
+  <div class="col-xs-12 nopadding">
+  	<div class="form-group col-xs-6">
+	  <label >Empresa:</label>
+	  <input type="text" class="form-control" id="empresa">
+	  <ul></ul>
+	</div>
+	<div class="form-group col-xs-6">
+	  <label >Teléfono Oficina:</label>
+	  <input type="tel" class="form-control" id="teloficina">
+	  <ul></ul>
+	</div>
+  </div>
+  
+  <div class="col-xs-12 nopadding">
+  	<div class="form-group col-xs-6">
+	  <label >Celular:</label>
+	  <input type="tel" class="form-control" id="celular">
+	  <ul></ul>
+	</div>
+	<div class="form-group col-xs-6">
+	  <label >Teléfono Casa:</label>
+	  <input type="tel" class="form-control" id="telcasa">
+	  <ul></ul>
+	</div>
+  </div>
+  
+  <div class="col-xs-12 nopadding">
+	<div class="form-group col-xs-12">
+	  <label >Correo:</label>
+	  <input type="email" class="form-control" id="correo">
+	  <ul></ul>
+	</div>
+  </div>
+  
+  <div class="col-xs-12 nopadding">
+   	<div class="form-group col-xs-12">
+	  <label >Dirección Casa:</label>
+	  <input type="text" class="form-control" id="dircasa">
+	  <ul></ul>
+	</div>
+  </div>
+  
+  <div class="col-xs-12 nopadding">
+  	<div class="form-group col-xs-6">
+	  <label >¿Hace cuántos años asiste a la iglesia?:</label>
+	  <input type="number" class="form-control" id="antiguedad"/>
+	  <ul></ul>
+	</div>
+  	<div class="form-group col-xs-6">
+  		<label>Fecha Aniversario:</label>
+	  	<div class="input-group date" id='aniversario'>
+	      <input type='text' class="form-control invisible"/>
+	      <p class="form-control"></p>
+	      <span class="input-group-addon">
+	          <span class="glyphicon glyphicon-calendar"></span>
+	      </span>
+	     </div>
+	     <ul></ul>
+  	</div>
+  </div>
+  
+  <div class="form-group col-xs-12 nopadding">
+  	<div class="form-group col-xs-6">
+      <label class="form-check-label"><input type='checkbox' data-val="10" class="form-check-input formacion" />Encuentro</label>
+  	</div>
+  	<div class="form-group col-xs-6">
+      <label class="form-check-label"><input type='checkbox' data-val="1" class="form-check-input formacion" />Pasos</label>
+  	</div>
+  	<div class="form-group col-xs-6">
+      <label class="form-check-label"><input type='checkbox' data-val="2" class="form-check-input formacion" />Nivel 1</label>
+  	</div>
+  	<div class="form-group col-xs-6">
+      <label class="form-check-label"><input type='checkbox' data-val="3" class="form-check-input formacion" />Nivel 2</label>
+  	</div>
+  	<div class="form-group col-xs-6">
+      <label class="form-check-label"><input type='checkbox' data-val="4" class="form-check-input formacion" />Nivel 3</label>
+  	</div>
+  	<div class="form-group col-xs-6">
+      <label class="form-check-label"><input type='checkbox' data-val="5" class="form-check-input formacion" />Nivel 4 (Santificación)</label>
+  	</div>
+  	<div class="form-group col-xs-6">
+      <label class="form-check-label"><input type='checkbox' data-val="6" class="form-check-input formacion" />Formación Líderes (Conquistadores)</label>      
+  	</div>
+  	<div class="form-group col-xs-6">
+      <label class="form-check-label"><input type='checkbox' data-val="7" class="form-check-input formacion" />Ananías</label>
+  	</div>
+  	<div class="form-group col-xs-6">
+      <label class="form-check-label"><input type='checkbox' data-val="8" class="form-check-input formacion" />Teología Ministerial (Berea)</label>
+  	</div>
+  	<div class="form-group col-xs-6">
+      <label class="form-check-label"><input type='checkbox' data-val="9" class="form-check-input formacion" />Semilleros</label>
+  	</div>
+  	<ul></ul>
+  </div>
+  {% if admin %}
+  <div class="col-xs-12 nopadding">
+  	<div class="form-group col-xs-6">
+	  <label >Rol:</label>
+	  <select class="form-control" id="rol">
+	  	<option value="0">Oveja</option>
+	  	<option value="1">Grupo Apoyo</option>
+	    <option value="2">Colider/Monitor</option>
+	    <option value="3">Lider</option>
+	  </select>
+	  <ul></ul>
+	</div>
+  	<div class="form-group col-xs-6">
+	  <label>Monitor:</label>
+	  <select class="form-control" id="monitor">
+	  </select>
+	  <ul></ul>
+	</div>
+  </div>
+  {% endif %}
+  
+  <div class="col-xs-12 nopadding">
+  	<div class="form-group col-xs-12">
+	  <label >Servicio:</label>
+	  <select class="form-control" id="servicio">
+	  	<option value="0">- Ninguno -</option>
+	  	<option value="1">Punto i</option>
+	  	<option value="2">Logística - Orientación</option>
+	  	<option value="3">Logística - Acomodación</option>
+	  	<option value="4">Protección y Cuidado</option>
+	  	<option value="5">Anfitriones</option>
+	  	<option value="6">Camerino</option>
+	    <option value="7">Facilitadores</option>
+	    <option value="8">Santa Cena</option>
+	    <option value="9">Su Presencia Kids</option>
+	    <option value="10">Logística - Grupos de Conexión</option>
+	    <option value="11">Logística - Diezmos</option>
+	    <option value="12">Staff</option>
+	    <option value="13">Banda</option>
+	    <option value="14">Producción</option>
+	    <option value="15">Coffee & Jesus</option>
+	    <option value="16">Connect Desk</option>
+	    <option value="17">Digitación</option>
+	    <option value="18">Eventos</option>
+	    <option value="19">Logística - Coordinadores</option>
+	    <option value="20">Protocolo</option>
+	    <option value="21">Recolección</option>
+	    <option value="22">Traducción</option>
+	    <option value="23">Teatro SPK</option>
+	  </select>
+	  <ul></ul>
+	</div>
+  </div>
+  
+  <div class="col-xs-12 nopadding">
+  	<div class="form-group col-xs-6">
+	  <label >Tipo Identificación pareja:</label>
+	  <select class="form-control" id="tipoIdentPareja">
+	  	<option value="CC">Cédula de ciudadanía</option>
+	    <option value="CE">Cédula de extranjería</option>
+	    <option value="SC">Salvoconducto</option>
+	    <option value="PA">Pasaporte</option>
+	  </select>
+	  <ul></ul>
+	</div>
+  	<div class="form-group col-xs-6">
+	  <label >Identificación pareja:</label>
+	  <div class="{% if admin %}input-group{% endif %}">
+	  <input type="number" class="form-control" id="cedulapareja">
+	  {% if admin %}
+	  <span class="input-group-btn quitarenreporte">
+        <button class="btn btn-info accion_ver_pareja" type="button">Ver</button>
+      </span>
+      {% endif %}
+      </div>
+	  <ul></ul>
+	</div>
+  </div>
+  <div class="col-xs-12">
+	  <div class="panel panel-info">
+		  <div class="panel-heading">
+		      <h4 class="panel-title pull-left" style="padding-top: 7.5px;">Hijos</h4>
+		      <button type="button" class="btn btn-info pull-right quitarenreporte" id="accion_agregar_hijo">Agregar</button>
+       		  <div class="clearfix"></div>
+	      </div>
+		  <div class="panel-body nopadding hijos">
+		  </div>
+	  </div>
+  </div>
+ 
+  <div class="form-group col-xs-12 nopadding">
+	<div class="form-group col-xs-12">
+	   <label class="form-check-label"><input type='checkbox' class="form-check-input" id="autorizacion" />Autorizo a <strong class="pagina">checkasistencia.appspot.com</strong> para usar mis datos personales para llevar la asistencia del grupo de conexión y para que me notifiquen noticias del mismo.</label>
+	</div>
+  </div>
+  
+  <div class="form-group col-xs-12 nopadding">
+  	<div class="form-group col-xs-{% if admin %}4{% else %}6{% endif %}">
+  		<button type="button" class="btn btn-success col-xs-12 accion_crear quitarenreporte">Guardar</button>
+  	</div>
+  	{% if admin %}
+  	<div class="form-group col-xs-4">
+  		<button type="button" class="btn btn-success col-xs-12 accion_enviar_nuevo quitarenreporte">Enviar</button>
+  	</div>
+  	{% endif %}
+  	<div class="form-group col-xs-{% if admin %}4{% else %}6{% endif %}">
+  		<button type="button" class="btn btn-danger col-xs-12 accion_regresar quitarenreporte">Regresar</button>
+  	</div>
+  </div>
+  </div>
+</form>
+{% endblock %}

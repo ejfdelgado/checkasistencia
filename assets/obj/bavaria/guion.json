@@ -1,0 +1,27 @@
+{
+"callbacks":[
+			{"texto":"callback1"},
+			{"d":"callback2"},
+			{"pos":"callback3"}
+		],
+"keys":{
+	"c":[
+			{"t":3.0, "v":2},
+			{"t":5.0, "v":5},
+			{"t":7.0, "v":-5}
+		],
+	"d":[
+			{"t":0, "v":15},
+			{"t":4, "v":10},
+			{"t":12, "v":10},
+			{"t":18, "v":9}
+		],
+	"texto":[
+			{"t":0, "v":"<h2>Qu&eacute; es proyecci&oacute;n 3d?</h2>"},
+			{"t":4, "v":"<h2>Se usar&aacute; como ejemplo los edificios del Parque Central Bavaria. (Agradecimiento a <a onclick=\"window.open('https://3dwarehouse.sketchup.com/user.html?id=1401497876940262522609393','_blank')\" target=\"_blank\" href=\"https://3dwarehouse.sketchup.com/user.html?id=1401497876940262522609393\">zappy bibicy</a>)</h2>"},
+			{"t":8, "v":"<h2>A la izquierda se muestra la perspectiva del proyector</h2>"},
+			{"t":12, "v":"<h2>Proyecci&oacute;n 3d es el <b>arte</b> de dibujar sobre la <b>perspectiva</b> del proyector</h2>"},
+			{"t":18, "v":"<h2>T&uacute; puedes hacerlo!</h2>"}
+			]
+}
+}

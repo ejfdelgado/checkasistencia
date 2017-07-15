@@ -1,0 +1,27 @@
+{
+"callbacks":[
+			{"texto":"callback1"},
+			{"d":"callback2"},
+			{"pos":"callback3"}
+		],
+"keys":{
+	"c":[
+			{"t":3.0, "v":2},
+			{"t":5.0, "v":5},
+			{"t":7.0, "v":-5}
+		],
+	"d":[
+			{"t":0, "v":15},
+			{"t":4, "v":10},
+			{"t":12, "v":10},
+			{"t":18, "v":9}
+		],
+	"texto":[
+			{"t":0, "v":"<h2>What is projection mapping?</h2>"},
+			{"t":4, "v":"<p>As an example we'll take the Bavaria Central Park buildings. (Thanks to <a onclick=\"window.open('https://3dwarehouse.sketchup.com/user.html?id=1401497876940262522609393','_blank')\" target=\"_blank\" href=\"https://3dwarehouse.sketchup.com/user.html?id=1401497876940262522609393\">zappy bibicy</a>)</p>"},
+			{"t":8, "v":"<p>At left you can appreciate the projector perspective</p>"},
+			{"t":12, "v":"<p>Projection mapping is the <b>art</b> of painting over the projector <b>perspective</b></p>"},
+			{"t":18, "v":"<h2>You can try!</h2>"}
+			]
+}
+}

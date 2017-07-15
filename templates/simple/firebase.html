@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div id="myform">
+
+<input type="text" name="texto"></input>
+<input type="button" id="accion" value="Agregar!"></input>
+</div>
+
+<ol id="resultado"></ol>
+
+{% endblock %}
+
+
+{% block pie %}
+<script src="https://www.gstatic.com/firebasejs/4.1.3/firebase.js"></script>
+<script>
+
+	// Initialize Firebase
+	var config = {
+		apiKey : "AIzaSyCWo8e8hTwU-QUhTUBTToIgVbwQBNQlqpM",
+		authDomain : "proyeccion-colombia1.firebaseapp.com",
+		databaseURL : "https://proyeccion-colombia1.firebaseio.com",
+		projectId : "proyeccion-colombia1",
+		storageBucket : "proyeccion-colombia1.appspot.com",
+		messagingSenderId : "569221347334"
+	};
+	firebase.initializeApp(config);
+	var database = firebase.database();
+	var fruits = database.ref('fruits');
+	
+	$('#accion').on('click', function() {
+		var data = {
+		  name: $('#myform [name="texto"]').val(),
+		  count: 7
+		};
+		console.log(data);
+		function finished(error) {
+			  if (error) {
+			    console.log('ooops');
+			  } else {
+			    console.log('data saved!');
+			  }
+			}
+		fruits.push(data, finished);
+	});
+	
+	function errData(err) {
+		console.log('Error 2')
+	}
+	
+	function gotData(data) {
+		var fruits = data.val();
+		// Grab the keys to iterate over the object
+		$('#resultado').empty();
+		if (fruits) {
+			var keys = Object.keys(fruits);
+			for (var i = 0; i < keys.length; i++) {
+				var key = keys[i];
+				// Look at each fruit object!
+				var fruit = fruits[key];
+				$('#resultado').append('<li>'+fruit.name+'</li>');	
+			}
+		}
+	};
+	fruits.on("value", gotData, errData);
+
+	firebase.auth().onAuthStateChanged(function(user) {
+		if (user) {
+			// User is signed in and currentUser will no longer return null.
+		} else {
+			// No user is signed in.
+		}
+	});
+</script>
+{% endblock %}

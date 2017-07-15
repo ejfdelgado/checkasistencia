@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% block content %}
+
+<form name="form-crear" class="panel panel-default">
+  <div class="panel-heading">Búsqueda</div>
+  <div class="panel-body nopadding">
+	  <div class="col-xs-12 nopadding">
+	  	<div class="form-group {% if admin %}col-xs-6{% else %}col-xs-12{% endif %}">
+		  <label>Buscar por nombres, apellidos o número de identificación:</label>
+		  <input type="text" class="form-control" id="q">
+		  <ul></ul>
+		</div>
+		{% if admin %}
+	  	<div class="form-group col-xs-6">
+		  <label>Monitor:</label>
+		  <select class="form-control" id="monitor">
+		  </select>
+		  <ul></ul>
+		</div>
+		{% endif %}
+	  </div>
+  <div class="form-group col-xs-12 nopadding">
+  	<div class="form-group col-xs-6">
+  		<button type="button" class="btn btn-success col-xs-12 accion_buscar_real">Buscar</button>
+  	</div>
+  	<div class="form-group col-xs-6">
+  		<button type="button" class="btn btn-danger col-xs-12 accion_regresar">Regresar</button>
+  	</div>
+  </div>
+  </div>
+</form>
+
+<div class="panel panel-default">
+  <div class="panel-heading">Resultados</div>
+  <div class="panel-body nopadding con-scroll">
+	<table id="resultados_busqueda_personas" class="table table-striped">
+	  <thead>
+	    <tr>
+	      <th>#</th>
+	      <th>Apellidos</th>
+	      <th>Nombres</th>
+	      <th>Identificación</th>
+	      <th>Acción</th>
+	    </tr>
+	  </thead>
+	  <tbody>
+	  </tbody>
+	</table>
+	</div>
+</div>
+
+{% endblock %}

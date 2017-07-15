@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block content %}
+			<!-- One .5 -->
+			<section id="work1" class="main style3 primary">
+				<div class="content container">
+					{% with nodo='/bloque6' tipo='Documento' %}
+					<header about="{{ nodo }}" typeof="{{ tipo }}">
+						<h2 property="titulo">{% buscar leng dicci tipo nodo 'titulo' 'My Work' %}</h2>
+						<div property="contenido">{% buscar leng dicci tipo nodo 'contenido' 'Lorem ipsum dolor sit amet et sapien sed elementum egestas dolore condimentum. Fusce blandit ultrices sapien, in accumsan orci rhoncus eu. Sed sodales venenatis arcu, id varius justo euismod in. Curabitur egestas consectetur magna.' %}</div>
+					</header>
+					{% endwith %}
+
+					{% autoescape off %}
+					{% with nodo='/temporal3' rel='scheduleTipoRel' %}
+					{% with mibusqueda='{"q":"SELECT * FROM Schedule WHERE fecha >= __DATETIMENOWFIRST__ ORDER BY fecha ASC", "n":100}' %}
+					<div typeof="lista3" about="{{ nodo }}">
+						<div class="container 75% gallery" rel="{{ rel }}">
+						{% with lista=entidades|darElemento:mibusqueda %}
+							{%for car in lista %}
+							<div class="row 0% images" about="{{ car.id }}" typeof="Schedule">
+								<div class="6u 12u(mobile)"><div class="image fit from-left"><img property="imagen" src="{% buscar2 leng car 'imagen' '/images/thumbs/01.jpg' %}" title="" alt="" /></div></div>
+								<div class="6u 12u(mobile)">
+									<div class="image fit from-right">
+										<h2 property="titulo">{% buscar2 leng car 'titulo' 'Titulo' %}</h2>
+										<div>
+											<div class="schedule_fecha" dateProperty="fecha" data-value="{{ car.fecha }}">
+												<div class="schedule_mes" data-format="MMMM"></div>
+												<div class="schedule_dia" data-format="dd"></div>
+												<div class="schedule_anio" data-format="yyyy"></div>
+											</div>
+											<div property="contenido" class="schedule_cont">{% buscar2 leng car 'contenido' 'Contenido' %}</div>
+										</div>
+									</div>
+								</div>
+							</div>
+							{% endfor %}
+							{% endwith %}
+						</div>
+					</div>
+						<div class="paginacion">
+						{% with cursor=cursores|darElemento:mibusqueda %}{% if cursor %}
+						{% ixpagina 0 cursor mibusqueda admin 'SectionSchedule' nodo rel leng 'inicio' %}
+						{% ixpagina 1 cursor mibusqueda admin 'SectionSchedule' nodo rel leng 'siguiente' %}
+						{% else %}
+						{% ixpagina 0 cursor mibusqueda admin 'SectionSchedule' nodo rel leng 'inicio' %}
+						{% endif %}
+						{% endwith %}
+						</div>
+					{% endwith %}
+					{% endwith %}
+					{% endautoescape %}
+				</div>
+			</section>
+{% endblock %}

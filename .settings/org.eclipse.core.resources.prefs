@@ -1,0 +1,16 @@
+eclipse.preferences.version=1
+encoding//assets/css/date/default.css=UTF-8
+encoding//assets/templates/calendar/js/fullcalendar-cstm.js=UTF-8
+encoding//assets/templates/simple/js/main.js=UTF-8
+encoding//templates/photon/test.html=UTF-8
+encoding//templates/simple/base.html=UTF-8
+encoding//templates/simple/index.html=UTF-8
+encoding//templates/simple/nuevo.html=UTF-8
+encoding//templates/simple/personas.html=UTF-8
+encoding//templates/simple/toma-asistencia.html=UTF-8
+encoding//templates/simple/verasistencia.html=UTF-8
+encoding//templates/strongly-typed/base.html=UTF-8
+encoding//templates/strongly-typed/index.html=UTF-8
+encoding//views/asistencia.py=utf-8
+encoding//views/main.py=utf-8
+encoding/models.py=utf-8

@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block content %}
+		<div id="wrapper">
+			<div id="bg"></div>
+			<div id="overlay"></div>
+			<div id="main">
+
+				<!-- Header -->
+				{% with nodo='/landing_head' tipo='Documento' %}
+					<header id="header" about="{{ nodo }}" typeof="{{ tipo }}">
+						<div property="titulo" class="editable">{% buscar leng dicci tipo nodo 'titulo' '<img src="/images/LOGO014A.png" style="50%;">' %}</div>
+						
+						<div property="contenido" class="textoppal subtitulo">{% buscar leng dicci tipo nodo 'contenido' 'Este es mi breve contenido' %}</div>
+						<form class="contenedor-envio-mensajes">
+							<h2 property="gracias" class="invisible textoppal subtitulo">{% buscar leng dicci tipo nodo 'gracias' 'Te estaremos contactando!' %}</h2>
+							<input type="text" placeholder="{% traducir leng 'nombres' %}" />
+							<input type="text" placeholder="{% traducir leng 'celular' %}" />
+							<input type="button" class="boton-envio-mensaje" value="{% traducir leng 'enviar' %}" />
+						</form>
+						
+						<div dateProperty="regresivo" data-value="{% buscar leng dicci tipo nodo 'regresivo' '1480809600' %}"><h2 class="mycountdown subtitulo textoppal" data-format="yyyy/MM/dd" data-count-format="Solo faltan %D d&iacute;as %H:%M:%S"></h2></div>
+						<div class="botones_sociales" data-facebook data-twitter data-googleplus></div>
+					</header>
+				{% endwith %}
+
+				<!-- Footer -->
+				{% with nodo='/landing_foot' tipo='Documento' %}
+					<footer id="footer" about="{{ nodo }}" typeof="{{ tipo }}">
+						<span property="texto" class="copyright editable">{% buscar leng dicci tipo nodo 'texto' '&copy; Untitled. Design: <a href="http://html5up.net">HTML5 UP</a>.' %}</span>
+					</footer>
+				{% endwith %}
+
+			</div>
+		</div>
+{% endblock %}

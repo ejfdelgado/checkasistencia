@@ -1,0 +1,104 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		{% with nodo=path|add:'/pagina' tipo='Documento' %}
+		<title>{% buscar leng dicci tipo nodo 'title' 'Strongly Typed by HTML5 UP' %}</title>
+		<meta property="og:title" content="{% buscar leng dicci tipo nodo 'title' 'Titulo' %}" />
+		<meta name="twitter:title" content="{% buscar leng dicci tipo nodo 'title' 'Titulo' %}" />
+		<meta property="og:description" content="{% buscar leng dicci tipo nodo 'description' 'Descripcion' %}" />
+		<meta name="twitter:description" content="{% buscar leng dicci tipo nodo 'description' 'Descripcion' %}" />
+		{% endwith %}
+		{% with nodo='/general' tipo="Configuracion" %}
+		<meta property="og:image" content="{% buscar leng dicci tipo nodo 'imagen' '/images/pic04.jpg' %}" />
+		<meta name="twitter:image" content="{% buscar leng dicci tipo nodo 'imagen' '/images/pic04.jpg' %}" />
+		<meta property="og:site_name" content="{% buscar leng dicci tipo nodo 'site_name' 'Nombre del Sitio' %}"/>
+		<meta property="og:url" content="{% buscar leng dicci tipo nodo 'url' 'http://www.dominio.com' %}">
+		<meta property="og:type" content="{% buscar leng dicci tipo nodo 'type' 'website' %}"/>
+		{% endwith %}
+		
+		{% if admin %}
+	    <link rel="stylesheet" href="/assets/css/create/create-ui.css" />
+	    <link rel="stylesheet" href="/assets/css/create/midgardnotif.css" />
+	    <link rel="stylesheet" href="/assets/css/date/default.css" />
+	    <link rel="stylesheet" href="/assets/css/date/default.date.css" />
+	    {% endif %}
+	    
+	    <!-- CSS's comunes -->
+		<link rel="stylesheet" href="/assets/css/create-basic.css" />
+		<link rel="stylesheet" href="/assets/css/font-awesome.min.css" />
+		<link rel="stylesheet" href="/assets/css/font-awesome.css" />
+		
+		<!-- 3d -->
+		<link rel="stylesheet" href="/assets/css/3d/pc3d.css" />
+		
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<!--[if lte IE 8]><script src="/assets/js/ie/html5shiv.js"></script><![endif]-->
+		<link rel="stylesheet" href="/assets/templates/strongly-typed/css/main.css" />
+		<!--[if lte IE 8]><link rel="stylesheet" href="/assets/templates/strongly-typed/css/ie8.css" /><![endif]-->
+		
+		<link rel="stylesheet" href="/miestilo.css" />
+		
+	<script type="text/html" id="SectionGallery">
+							<div class="4u 12u(mobile)" about="" typeof="Gallery">
+									<section>
+										<div class="image featured" styleProperty="fondo" style="background-image: url('/images/pic01.jpg') !important; background-size: cover;"><img src="/images/43.png" alt=""/></div>
+										<header>
+											<h3 property="titulo">Okay, so what is this?</h3>
+										</header>
+										<div property="contenido">This is <strong>Strongly Typed</strong>, a free, fully responsive site template
+										by <a href="http://html5up.net">HTML5 UP</a>. Free for personal and commercial use under the
+										<a href="http://html5up.net/license">CCA 3.0 license</a>.</div>
+
+										<div class="invisible editable popupclient elem1" property="popupclient1"></div>
+										<div class="invisible popupclient_btn"></div>
+									</section>
+							</div>
+	</script>
+		
+		__USER__
+		
+		{% block encabezado %}{% endblock %}
+	</head>
+	<body class="{% block clasesbody %}{% endblock %}">
+	
+		{% with nodo=path|add:'/pagina' tipo='Documento' %}
+		<div class="menu_pagina menu_core invisible" about="{{ nodo }}" typeof="{{ tipo }}">
+			<ul>
+				<li><span>T&iacute;tulo:</span><div textplain="true" property="title">{% buscar leng dicci tipo nodo 'title' 'Nucleus' %}</div></li>
+				<li><span>Descripci&oacute;n:</span><div textplain="true" property="description">{% buscar leng dicci tipo nodo 'description' 'Descripcion' %}</div></li>
+				<li><span>Im&aacute;gen:</span><div textplain="true" property="imagen">{% buscar leng dicci tipo nodo 'imagen' '/images/pic04.jpg' %}</div></li>
+			</ul>
+		</div>
+		{% endwith %}
+	
+		{% block content %}{% endblock %}
+			
+			{% autoescape off %}
+			{{ JS_COMUNES3 }}
+			
+			<!-- 3d -->
+			<script src="/assets/js/3d/three.min.js"></script>
+			<script src="/assets/js/3d/MTLLoader.js"></script>
+			<script src="/assets/js/3d/OBJMTLLoader.js"></script>
+			<script src="/assets/js/comun/jquery.mobile-events.min.js"></script>
+			<script src="/assets/js/3d/Detector.js"></script>
+			<script src="/assets/js/3d/callbacks.js"></script>
+			<script src="/assets/js/3d/pc3d.js"></script>
+			
+			<!-- Scripts for template -->
+			<script src="/assets/js/comun/jquery.dropotron.min.js"></script>
+			<script src="/assets/js/comun/skel-viewport.min.js"></script>
+			<script src="/assets/templates/strongly-typed/js/main.js"></script>
+
+			{{ JS_COMUNES0 }}
+			{% if admin %}
+			{{ JS_COMUNES1 }}
+			{% endif %}
+			{{ JS_COMUNES2 }}
+			{{ ANALYTICS }}
+			{% endautoescape %}
+
+			{% block scripts %}{% endblock %}
+	</body>
+</html>

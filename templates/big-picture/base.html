@@ -1,0 +1,140 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		{% with nodo=path|add:'/pagina' tipo='Documento' %}
+		<title>{% buscar leng dicci tipo nodo 'title' 'Strongly Typed by HTML5 UP' %}</title>
+		<meta property="og:title" content="{% buscar leng dicci tipo nodo 'title' 'Titulo' %}" />
+		<meta name="twitter:title" content="{% buscar leng dicci tipo nodo 'title' 'Titulo' %}" />
+		<meta property="og:description" content="{% buscar leng dicci tipo nodo 'description' 'Descripcion' %}" />
+		<meta name="keywords" content="{% buscar leng dicci tipo nodo 'palabrasclave' '' %}">
+		<meta name="twitter:description" content="{% buscar leng dicci tipo nodo 'description' 'Descripcion' %}" />
+		{% endwith %}
+		{% with nodo='/general' tipo="Configuracion" %}
+		<meta property="og:image" content="{% buscar leng dicci tipo nodo 'imagen' '/images/pic04.jpg' %}" />
+		<meta name="twitter:image" content="{% buscar leng dicci tipo nodo 'imagen' '/images/pic04.jpg' %}" />
+		<meta property="og:site_name" content="{% buscar leng dicci tipo nodo 'site_name' 'Nombre del Sitio' %}"/>
+		<meta property="og:url" content="{% buscar leng dicci tipo nodo 'url' 'http://www.dominio.com' %}">
+		<meta property="og:type" content="{% buscar leng dicci tipo nodo 'type' 'website' %}"/>
+		{% endwith %}
+		
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		
+		{% if admin %}
+	    <link rel="stylesheet" href="/assets/css/create/create-ui.css" />
+	    <link rel="stylesheet" href="/assets/css/create/midgardnotif.css" />
+	    <link rel="stylesheet" href="/assets/css/date/default.css" />
+	    <link rel="stylesheet" href="/assets/css/date/default.date.css" />
+	    {% endif %}
+		
+		<!-- CSS's comunes -->
+		<link rel="stylesheet" href="/assets/css/create-basic.css" />
+		<link rel="stylesheet" href="/assets/css/font-awesome.min.css" />
+		<link rel="stylesheet" href="/assets/css/font-awesome.css" />
+		<!--[if lte IE 8]><script src="/assets/js/ie/html5shiv.js"></script><![endif]-->
+		<link rel="stylesheet" href="/assets/templates/big-picture/css/main.css" />
+		<!--[if lte IE 8]><link rel="stylesheet" href="/assets/templates/big-picture/css/ie8.css" /><![endif]-->
+		<!--[if lte IE 9]><link rel="stylesheet" href="/assets/templates/big-picture/css/ie9.css" /><![endif]-->
+		
+		<style>
+		.create-ui-toolbar-wrapper {
+    		top: 60px !important;
+    	}
+    	[property="youtube"] {
+    		overflow: hidden;
+    	}
+    	[property="youtube"] iframe {
+    		width: 100%;
+    	}
+    	
+    	.botones_sociales {
+    		width: 250px;
+    		margin: 0 auto;
+    	}
+		</style>
+		
+		<link rel="stylesheet" href="/miestilo.css" />
+		<link rel="stylesheet" href="/assets/css/rrssb.css" />
+		
+		<script type="text/html" id="SectionSchedule">
+							<div class="row 0% images" about="" typeof="Schedule">
+								<div class="6u 12u(mobile)"><div class="image fit from-left"><img property="imagen" src="/images/thumbs/01.jpg" title="" alt="" /></div></div>
+								<div class="6u 12u(mobile)">
+									<div class="image fit from-right">
+										<h2 property="titulo">Titulo</h2>
+										<div>
+											<div class="schedule_fecha" dateProperty="fecha">
+												<div class="schedule_mes" data-format="MMMM">ENERO</div>
+												<div class="schedule_dia" data-format="dd">01</div>
+												<div class="schedule_anio" data-format="yyyy">2016</div>
+											</div>
+											<div property="contenido" class="schedule_cont">Descripcion</div>
+										</div>
+									</div>
+								</div>
+							</div>
+		</script>
+		
+		<script type="text/html" id="SectionGallery">
+							<div class="row 0% images" about="" typeof="Gallery">
+								<div class="6u 12u(mobile)"><div class="image fit from-left editable youtube_box" property="youtube"></div></div>
+								<div class="6u 12u(mobile)"><div class="image fit from-right"><h2 property="titulo">Titulo</h2><div property="contenido">Texto de contenido</div></div></div>
+							</div>
+		</script>
+		
+		__USER__
+		
+		{% block encabezado %}{% endblock %}
+	</head>
+	<body>
+		{% with nodo=path|add:'/pagina' tipo='Documento' %}
+		<div class="menu_pagina invisible" about="{{ nodo }}" typeof="{{ tipo }}">
+			<ul>
+				<li><span>T&iacute;tulo:</span><div textplain="true" property="title">{% buscar leng dicci tipo nodo 'title' 'Nucleus' %}</div></li>
+				<li><span>Descripci&oacute;n:</span><div textplain="true" property="description">{% buscar leng dicci tipo nodo 'description' 'Descripcion' %}</div></li>
+				<li><span>Palabras clave:</span><div textplain="true" property="palabrasclave">{% buscar leng dicci tipo nodo 'palabrasclave' '' %}</div></li>
+				<li><span>Im&aacute;gen:</span><div textplain="true" property="imagen">{% buscar leng dicci tipo nodo 'imagen' '/images/pic04.jpg' %}</div></li>
+			</ul>
+		</div>
+		{% endwith %}
+
+		{% block content %}{% endblock %}
+
+		<!-- Footer -->
+			{% with nodo='/social1' tipo='Documento' %}
+			<footer id="footer" about="{{ nodo }}" typeof="{{ tipo }}">
+
+				<!-- Icons -->
+					<ul class="actions editable" property="redes">
+						{% buscar leng dicci tipo nodo 'redes' '<li><a href="#" class="icon fa-twitter"><span class="label">Twitter</span></a></li><li><a href="#" class="icon fa-facebook"><span class="label">Facebook</span></a></li><li><a href="#" class="icon fa-google-plus"><span class="label">Google+</span></a></li><li><a href="#" class="icon fa-dribbble"><span class="label">Dribbble</span></a></li><li><a href="#" class="icon fa-pinterest"><span class="label">Pinterest</span></a></li><li><a href="#" class="icon fa-instagram"><span class="label">Instagram</span></a></li>' %}
+					</ul>
+					
+
+				<!-- Menu -->
+					<ul class="menu editable" property="pie">
+						{% buscar leng dicci tipo nodo 'pie' '<li>&copy; Untitled</li><li>Developed by: <a target="_blank" href="http://www.proyeccioncolombia.com">Proyecci&oacute;n Colombia</a></li><li>Design: <a target="_blank" href="http://html5up.net">HTML5 UP</a></li>' %}
+					</ul>
+
+			</footer>
+			{% endwith %}
+
+			{% autoescape off %}
+			{{ JS_COMUNES3 }}
+			
+			<!-- Scripts for template -->
+			<script src="/assets/templates/big-picture/js/util.js"></script>
+			<script src="/assets/templates/big-picture/js/main.js"></script>
+
+			{{ JS_COMUNES0 }}
+			{% if admin %}
+			{{ JS_COMUNES1 }}
+			{% endif %}
+			{{ JS_COMUNES2 }}
+			{{ ANALYTICS }}
+			{% endautoescape %}
+			
+			<script src="/assets/js/comun/rrssb.min.js"></script>
+			
+			{% block scripts %}{% endblock %}
+	</body>
+</html>
