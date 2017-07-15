@@ -179,7 +179,8 @@ def AsistenciaHandler(request, ident):
         nuevo = Asistente()
         nuevo.primiparo = fechaAhora
         enriquecerEntidad(payload, Asistente)
-        logging.info(payload)
+        if not payload.has_key('monitor'):
+            payload['monitor'] = 0 #significa que esta por asignar
         rta = comun.llenarYpersistir(Asistente, nuevo, payload, None)
         return rta
     
