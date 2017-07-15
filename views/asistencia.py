@@ -172,7 +172,10 @@ def AsistenciaHandler(request, ident):
         for atributo in attributos:
             contenido = payload[atributo]
             if not contenido is None :
-                texto+=contenido+' '
+                if atributo == 'cedula':
+                    texto+=contenido[2:]+' '#le quito las primeras dos letras
+                else:
+                    texto+=contenido+' '
         payload['busqueda'] = tokenizar(texto, 3)
     
     def crearPersona(payload):

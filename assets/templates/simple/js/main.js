@@ -30,6 +30,7 @@ var organizarOpciones = function(select) {
 };
 
 var crearContexto = function(val){
+	val.t = new Date().getTime();
 	var ctx = JSON.stringify(val);
 	ctx = btoa(ctx);
 	return ctx;
@@ -1170,11 +1171,11 @@ $(function () {
     	
     	var put_ = function(llave, val) {
     		var todo = {date:new Date().getTime(), val:val};
-    		sessionStorage[llave] = JSON.stringify(todo);
+    		localStorage[llave] = JSON.stringify(todo);
     	};
     	
     	var get_ = function(llave) {
-    		var todo = sessionStorage[llave];
+    		var todo = localStorage[llave];
     		try {
     			todo = JSON.parse(todo);
     			if ((new Date().getTime() - todo.date) > maxDif) {
@@ -1245,7 +1246,7 @@ $(function () {
     		$.ajax({
       		  type: peticion.tipo,
       		  contentType: 'application/json; charset=utf-8',
-      		  url: peticion.url,
+      		  url: peticion.url+'&t='+new Date().getTime(),
       		  data: hayValor(data)?JSON.stringify(data):null,
       		  error: function(data) {
       			mensajeErrorSistema();
@@ -1286,6 +1287,15 @@ $(function () {
     	}
     }();
     
+    //Debo buscar el grupo de conexión al que pertenezco
+    //TODO agregar seguridad
+    if (seguridadLocal.hayUsuario()) {
+    	//var valorUsuario = miCache.leer('USUARIO', null, true);
+    	//valorUsuario.done(function(data) {
+    	//	console.log(data);
+    	//});
+    }
+    
     var inicializar = function() {
     	var ctx = leerContexto();
     	if (hayValor(ctx)) {
@@ -1299,16 +1309,7 @@ $(function () {
     			ctrl.cedula.asignar(ctx.datos_nuevo.cedula);
     		}
     	}
-    }();
-    
-    //Debo buscar el grupo de conexión al que pertenezco
-    //TODO agregar seguridad
-    if (seguridadLocal.hayUsuario()) {
-    	//var valorUsuario = miCache.leer('USUARIO', null, true);
-    	//valorUsuario.done(function(data) {
-    	//	console.log(data);
-    	//});
-    }
+    };
     
     if (seguridadLocal.esAdmin()) {
     	var LLAVE_MONITOR = 'VER_MONITORES';
@@ -1327,6 +1328,8 @@ $(function () {
         		monitoresListos.resolve(lista);
         	});
     	}
+    } else {
+    	monitoresListos.resolve([]);
     }
     
     monitoresListos.done(function(lista) {
@@ -1338,6 +1341,7 @@ $(function () {
     		destinoSelect.append($('<option value="'+llave+'">'+valor.toCamelCase(valor)+'</option>'));
     	});
     	organizarOpciones(destinoSelect);
+    	inicializar();
     });
     
     //Se organiza la lista de opciones
