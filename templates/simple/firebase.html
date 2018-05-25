@@ -9,12 +9,19 @@
 
 <ol id="resultado"></ol>
 
+<pre id="visionJsonUltima"></pre>
+<pre id="visionJson"></pre>
+
 {% endblock %}
 
 
 {% block pie %}
 <script src="https://www.gstatic.com/firebasejs/4.1.3/firebase.js"></script>
 <script>
+
+	var jsonToHtml = function(val) {
+		return JSON.stringify(val, null, 4).replace('\n', '<br>');
+	};
 
 	// Initialize Firebase
 	var config = {
@@ -28,29 +35,59 @@
 	firebase.initializeApp(config);
 	var database = firebase.database();
 	var fruits = database.ref('fruits');
+	var ultimaFruta = database.ref('ultimaFruta');
 	
 	$('#accion').on('click', function() {
 		var data = {
-		  name: $('#myform [name="texto"]').val(),
-		  count: 7
+		  texto: $('#myform [name="texto"]').val(),
 		};
-		console.log(data);
-		function finished(error) {
-			  if (error) {
-			    console.log('ooops');
-			  } else {
-			    console.log('data saved!');
-			  }
-			}
-		fruits.push(data, finished);
+		
+		// Get a key for a new Post.
+		var newPostKey = fruits.push().key;
+		// Write the new post's data simultaneously in the posts list and the user's post list.
+		var updates = {};
+		updates['/fruits/' + newPostKey] = data;
+		updates['/ultimaFruta/'] = data;
+		var promesa = firebase.database().ref().update(updates);
+		
+		promesa.then(function() {
+			$('#myform [name="texto"]').val('')
+			console.log('data saved!');
+		});
+		
+		//fruits.push(data, finished);
 	});
 	
-	function errData(err) {
-		console.log('Error 2')
-	}
+	function borrarElemento() {
+		var elem = $(this);
+		var llave = elem.attr('data-key');
+		
+		var metodo1 = function() {
+			var promesa = firebase.database().ref('fruits/' + llave).set(null);
+			promesa.then(function() {
+				console.log('Entrada borrada!')
+			});
+		};
+		
+		var metodo2 = function() {
+			fruits.child(llave).remove();
+		};
+		
+		var metodo3 = function() {
+			var updates = {};
+			updates['/fruits/' + llave] = null;
+			var promesa = firebase.database().ref().update(updates);
+			promesa.then(function() {
+				console.log('Entrada borrada!')
+			});
+		};
+		
+		metodo3();
+	};
 	
 	function gotData(data) {
 		var fruits = data.val();
+		$('#visionJson').html(jsonToHtml(fruits))
 		// Grab the keys to iterate over the object
 		$('#resultado').empty();
 		if (fruits) {
@@ -59,12 +96,29 @@
 				var key = keys[i];
 				// Look at each fruit object!
 				var fruit = fruits[key];
-				$('#resultado').append('<li>'+fruit.name+'</li>');	
+				var nuevoElemento = $('<li>'+fruit.texto+'</li>');
+				var borrame = $('<a href="#">(Borrame)</a>');
+				borrame.attr('data-key', key);
+				borrame.on('click', borrarElemento);
+				nuevoElemento.append(borrame);
+				$('#resultado').append(nuevoElemento);	
 			}
 		}
 	};
-	fruits.on("value", gotData, errData);
+	
+	function funcionError(err) {
+		console.log('Error ',err)
+	}
+	
+	//Escuchan eventos de cambio de información
+	fruits.on("value", gotData, funcionError);
+	
+	ultimaFruta.on("value", function(data) {
+		var ultima = data.val();
+		$('#visionJsonUltima').html(jsonToHtml(ultima))
+	}, funcionError);
 
+	//Para validar la autenticación
 	firebase.auth().onAuthStateChanged(function(user) {
 		if (user) {
 			// User is signed in and currentUser will no longer return null.

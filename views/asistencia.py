@@ -259,6 +259,23 @@ def AsistenciaHandler(request, ident):
                     response.write(simplejson.dumps({'error':0, 'rta': rta}))
                 else:
                     response.write(simplejson.dumps({'error':1, 'msg': 'La persona no esta registrada'}))
+            elif (accion == 'pedir-actualizar'):
+                viejo = buscarPersona(payload)
+                if viejo:
+                    try:
+                        message = mail.EmailMessage()
+                        message.sender = "gcamigosdedios@gmail.com"
+                        message.to = viejo.correo
+                        message.html = payload['mensaje']
+                        message.body = payload['mensaje']
+                        message.subject = "Grupo de conexión".decode('utf-8')+'-'+datetime.date.today().strftime("%B %d, %Y")
+                        message.send()
+                        response.write(simplejson.dumps({'error':0}))
+                    except:
+                        logging.exception("message")
+                        response.write(simplejson.dumps({'error':1, 'msg': 'No se logró enviar el correo'}))
+                else:
+                    response.write(simplejson.dumps({'error':1, 'msg': 'La persona no esta registrada'}))
             elif (accion == 'buscar-personas'):
                 objeto = verPersonasQ(payload, 10)
                 entidades = comun.to_dict(objeto['datos'])

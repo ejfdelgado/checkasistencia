@@ -14,6 +14,8 @@ from google.appengine.api import app_identity
 from django.http import HttpResponse
 from django.utils import simplejson
 
+from google.appengine.api.app_identity import get_application_id
+
 def general(response):
     bucket_name = os.environ.get('BUCKET_NAME', app_identity.get_default_gcs_bucket_name())
     response.write(simplejson.dumps({
@@ -81,7 +83,7 @@ def StorageHandler(request, ident):
     try:
         if request.method == 'GET':
             if (ident == 'list'):
-                ans = list_bucket('/checkasistencia.appspot.com') 
+                ans = list_bucket('/'+get_application_id()+'.appspot.com')  
                 response.write(simplejson.dumps({'error':0, 'all_objects': ans}))
             elif (ident == 'basic'):
                 general(response)

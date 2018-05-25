@@ -1,9 +1,11 @@
 eclipse.preferences.version=1
 encoding//assets/css/date/default.css=UTF-8
 encoding//assets/templates/calendar/js/fullcalendar-cstm.js=UTF-8
+encoding//assets/templates/simple/htmls/correo.html=UTF-8
 encoding//assets/templates/simple/js/main.js=UTF-8
 encoding//templates/photon/test.html=UTF-8
 encoding//templates/simple/base.html=UTF-8
+encoding//templates/simple/firebase.html=UTF-8
 encoding//templates/simple/index.html=UTF-8
 encoding//templates/simple/nuevo.html=UTF-8
 encoding//templates/simple/personas.html=UTF-8

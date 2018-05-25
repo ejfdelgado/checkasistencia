@@ -19,6 +19,28 @@ var formatearFecha = function(dato) {
 	}
 };
 
+var decodeHtml = function(texto) {
+	return $('<div></div>').html(texto).text();
+}
+
+var htmlEncode = function(texto) {
+	texto = texto
+    .replace(/&/g, '&amp;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;');
+	return $('<div></div>').text(texto).html();
+}
+
+var encodeHtml = function(texto) {
+    var lines = texto.split(/\r\n|\r|\n/);
+    for (var i = 0; i < lines.length; i++) {
+        lines[i] = htmlEncode(lines[i]);
+    }
+    return lines.join('<br/>');
+};
+
 var organizarOpciones = function(select) {
 	var options = select.find('option');
 	var arr = options.map(function(_, o) { return { t: $(o).text(), v: o.value }; }).get();
@@ -28,6 +50,59 @@ var organizarOpciones = function(select) {
 	  $(o).text(arr[i].t);
 	});
 };
+
+var esTexto = function(a) {
+	return typeof(a) == 'string';
+}
+
+var esNumero = function(a) {
+	return typeof(a) == 'number';
+}
+
+var intentarParsearEntero = function(a) {
+	try {
+		var ans = parseInt(a);
+		if (!isNaN(ans)) {
+			return ans;
+		}
+	}catch(e) {}
+	return a;
+}
+
+var ordenarPorColumna = function(columna) {
+	var indice = parseInt(columna.attr('data-indice'));
+	var direccion = hayValor(columna.attr('data-dir'));
+	var miTabla = columna.closest('table').find('tbody');
+	var filas = miTabla.find('tr').detach();
+	console.log('ordenando por la columna '+indice+' direccion '+direccion);
+	filas.sort(function (a, b) {
+		var refA = $($(a).find('td:nth-child('+(indice+1)+')'));
+		var refB = $($(b).find('td:nth-child('+(indice+1)+')'));
+		var contentA = (hayValor(refA.attr('data-sort')) ? refA.attr('data-sort') : intentarParsearEntero(refA.text()));
+		var contentB = (hayValor(refB.attr('data-sort')) ? refB.attr('data-sort') : intentarParsearEntero(refB.text()));
+		
+		var ans = 0;
+		if (!esTexto(contentA) && !esTexto(contentB)) {
+			ans = (contentA < contentB) ? -1 : (contentA > contentB) ? 1 : 0;
+		} else {
+			contentA = ''+contentA;
+			contentB = ''+contentB;
+			ans = contentA.localeCompare(contentB);
+		}
+		
+		if (direccion) {
+			ans = ans * -1;
+		}
+		//console.log(contentA+' vs '+contentB+ '=' +ans)
+		return ans;
+   });
+	if (!direccion) {
+		columna.attr('data-dir', 'si');
+	} else {
+		columna.attr('data-dir', null);
+	}
+	miTabla.append(filas);
+}
 
 var crearContexto = function(val){
 	val.t = new Date().getTime();
@@ -258,6 +333,8 @@ $(function () {
     var accion_enviar = $('.accion_enviar');
     var accion_enviar_nuevo = $('.accion_enviar_nuevo');
     var accion_ver_pareja =$('.accion_ver_pareja');
+    var accion_enviar_correo_actualizar = $('.accion_enviar_correo_actualizar');
+    var accion_ver_parejas = $('.ver_parejas');
     
     var adminFoto = (function() {
     	var file = null;
@@ -362,20 +439,29 @@ $(function () {
 		elemNum.val(ans.numero);
 	};
     
-    var confirmeGeneral = function(msg, accion) {
+    var confirmeGeneral = function(msg, accion, extra) {
+    	if (!hayValor(extra)) {
+    		extra = '';
+    	}
     	miModalConfirmeSalir.find('p').text(msg);
     	miModalConfirmeSalir.find('.accion_confirmar').off('click tap');
     	miModalConfirmeSalir.find('.accion_confirmar').on('click tap', accion);
+    	miModalConfirmeSalir.find('.extra').html(extra);
     	miModalConfirmeSalir.modal('show');
+    	return miModalConfirmeSalir;
     };
     
-    var mensajeGeneral = function(mensaje, funcion) {
+    var mensajeGeneral = function(mensaje, funcion, esHtml) {
     	if (hayValor(funcion)) {
     		$('.accion_aceptar_general').on('click tap', funcion);
     	} else {
     		$('.accion_aceptar_general').on('click tap', function(){});
     	}
-    	miModalGeneral.find('.mensaje').text(mensaje);
+    	if (esHtml == true) {
+    		miModalGeneral.find('.mensaje').html(mensaje);
+    	} else {
+    		miModalGeneral.find('.mensaje').text(mensaje);
+    	}
     	miModalGeneral.modal('show');
     }
     
@@ -477,6 +563,79 @@ $(function () {
     	window.open(window.location.origin+'/nuevo.html?ctx='+ctx, '_blank');
     });
     
+    var funcionRealEnviarCorreo = function(elemento) {
+    	
+    	var promesa = miCache.leer('TEMPLATE_CORREO', null, true);
+    	promesa.done(function(templateCorreo) {
+	    	var listaIds = [];
+	    	var reporte = [];
+	    	
+	    	var totalRegistros = null;
+	    	var existosos = 0;
+	    	var fallidos = 0;
+	    	
+	    	var funcionEnviarCorreo = function(mensaje) {
+	    		if (listaIds.length == 0) {
+	    			if (fallidos == 0) {
+	    				mensajeGeneral('Perfecto!');
+	    			} else {
+	    				mensajeGeneral('Terminó el envío, pero fallaron '+fallidos+' de un total de '+totalRegistros);
+	    			}
+	    			return;
+	    		}
+	    		if (totalRegistros == null) {
+	    			tottotalRegistrosal = listaIds.length;
+	    		}
+	    		var idLocal = listaIds[0].id;
+	    		var unElem = listaIds[0].elem;
+	    		var perRef = cachePersonas[idLocal];
+	    		
+	    		var ctx = {leer_persona:{id:idLocal}};
+				ctx = crearContexto(ctx);
+				
+				var nuevoMensaje = templateCorreo;
+				nuevoMensaje = nuevoMensaje.replace('{mensaje}', encodeHtml(mensaje));
+				nuevoMensaje = nuevoMensaje.replace('{enlace}', window.location.origin+'/nuevo.html?ctx='+ctx);
+				
+	    		var promesa = miCache.leer('PEDIR_ACTUALIZAR', {id:idLocal, mensaje:nuevoMensaje});
+		    	promesa.always(function(data) {
+		    		listaIds.splice(0, 1);
+		    		setTimeout(function() {funcionEnviarCorreo(mensaje);}, 500);
+		    	});
+		    	promesa.done(function() {
+		    		existosos++;
+		    		unElem.removeClass('correo-fallido');
+		    		unElem.addClass('correo-enviado');
+		    		reporte.push(perRef.rta.correo+' ok.');
+		    	});
+		    	promesa.fail(function() {
+		    		fallidos++;
+		    		unElem.removeClass('correo-enviado');
+		    		unElem.addClass('correo-fallido');
+		    		reporte.push(perRef.rta.correo+' falló.');
+		    	});
+	    	};
+	    	
+			var refModal = confirmeGeneral('¿Seguro?', function() {
+				$.each(elemento, function(i, elem) {
+					var jqueryElem = $(elem);
+					//jqueryElem.removeClass('correo-enviado');
+					//jqueryElem.removeClass('correo-fallido');
+					var id = jqueryElem.attr('data-id');
+					if (hayValor(id) && !jqueryElem.hasClass('correo-enviado')) {
+						listaIds.push({id:parseInt(id), elem:jqueryElem});
+					}
+				});
+				funcionEnviarCorreo(refModal.find('[name="extra"]').val());
+			}, '<div class="col-xs-12"><p>Escribe acá el mensaje personalizado:</p><textarea name="extra" class="col-xs-12" rows=4></textarea></div>');
+    	});
+    };
+    
+    accion_enviar_correo_actualizar.on('click tap', function() {
+    	var elemento = $('#resultados_busqueda_personas').find('tr');
+    	funcionRealEnviarCorreo($(elemento));
+    });
+    
     btnaccion_logout.on('click tap', function() {
     	miCache.borrarTodo();
     	navegar(seguridadLocal.logoutUrl());
@@ -537,6 +696,10 @@ $(function () {
     
     accion_verfaltantes.on('click tap', function() {
     	controlAsistencia.verTodos();
+    });
+    
+    accion_ver_parejas.on('click tap', function() {
+    	controlAsistencia.verParejas();
     });
     
     accion_vernuevos.on('click tap', function() {
@@ -615,7 +778,7 @@ $(function () {
     	return promesaTotal;
     } 
     
-    var verTabla_ = function(tipoBusqueda, rebuscar, controlesFormulario_, validarFormularioAsistencia_, jTabla, transformarPayload, generadorFila, claseUnicaHeader) {
+    var verTabla_ = function(tipoBusqueda, rebuscar, controlesFormulario_, validarFormularioAsistencia_, jTabla, transformarPayload, generadorFila, claseUnicaHeader, funcionFinal) {
     	var promesaTotal = $.Deferred();
     	var borrarTabla_ = function() {
     		jTabla.find('tbody').empty();
@@ -628,16 +791,38 @@ $(function () {
     		jTabla.find(claseUnicaHeader).removeClass('quitarenreporte');
     		jTabla.find('.siempre').removeClass('invisible');
     	}
+    	var indice = 0;
+    	$.each(jTabla.find('thead th'), function(i, elem) {
+    		var col = $(elem);
+    		if (!col.hasClass('invisible')) {
+    			col.attr('data-indice', indice);
+    			col.on('click tap', function() {
+        			ordenarPorColumna(col);
+        			if (esFuncion(funcionFinal)) {
+        				funcionFinal();
+        			}
+        		});
+    			indice++;
+    		}
+    	})
+    	
 		 
     	var agregarFila_ = function(linea, idPersona) {
+    		var ctx = {leer_persona:{id:idPersona}};
+			ctx = crearContexto(ctx);
+			var enlacePersonal = window.location.origin+'/nuevo.html?ctx='+ctx;
     		var fila = $('<tr>');
+    		fila.attr('data-id', idPersona);
     		$.each(linea, function(i, elem) {
+    			var href = $('<a target="_blank"></a>');
+    			href.attr('href', enlacePersonal);
     			var col = $('<td>');
     			if (linea[i].html == true) {
-    				col.html(linea[i].contenido);
+    				href.html(linea[i].contenido);
     			} else {
-    				col.text(linea[i].contenido);
+    				href.text(linea[i].contenido);
     			}
+    			col.append(href);
     			if (hayValor(linea[i].clases)) {
     				$.each(linea[i].clases, function(j, val) {
     					col.addClass(val);
@@ -652,10 +837,14 @@ $(function () {
     		});
     		var botonEditar = $('<button type="button" class="btn btn-success">Ver</button>');
     		botonEditar.on('click tap', function() {
-    			var ctx = {leer_persona:{id:idPersona}};
-    			ctx = crearContexto(ctx);
-    			window.open(window.location.origin+'/nuevo.html?ctx='+ctx, '_blank');
+    			window.open(enlacePersonal, '_blank');
     		});
+    		
+    		var botonEnviarCorreo = $('<button type="button" class="btn btn-info">Enviar Correo</button>');
+    		botonEnviarCorreo.on('click tap', function() {
+    			funcionRealEnviarCorreo(fila);
+    		});
+    		
     		var botonBorrar = $('<button type="button" class="btn btn-danger">Borrar</button>');
     		botonBorrar.on('click tap', function() {
     			confirmeGeneral('¿Seguro?', function() {
@@ -671,6 +860,7 @@ $(function () {
     		if (hayValor(idPersona)) {
 	    		t1.find('div').append(botonEditar);
 	    		if (seguridadLocal.esAdmin()) {
+	    			t1.find('div').append(botonEnviarCorreo);
 	    			t1.find('div').append(botonBorrar);
 	    		}
     		}
@@ -703,12 +893,19 @@ $(function () {
     		var funRecursiva = function() {
     			if (entidades.length > 0) {
         			var ref = entidades[0];
+        			var esConAsistente = (hayValor(ref.asistente));
+        			var idCache = null;
+        			if (esConAsistente) {
+        				idCache = ref.asistente;
+        			} else {
+        				idCache = ref.id;
+        			}
     	    		var agregarReal = function(data) {
     		    		var elem = $.extend({}, data.rta, true);
     		    		if (!(elem.id in unicos)) {
     		    			if (hayValor(elem.id)) {
 	    		    			unicos[elem.id]=true;
-		    		    		cachePersonas[ref.asistente] = data;
+	    		    			cachePersonas[idCache] = data;
     		    			}
 	    		    		elem.fecha = ref.fecha;
 	    		    		var temp = [];
@@ -732,12 +929,12 @@ $(function () {
     		    		agregarReal({rta:ref});
     		    		seguir();
     		    	} else {
-	    		    	if (!(ref.asistente in cachePersonas)) {
-	    		    		var promesa2 = miCache.leer('LEER_PERSONA', {id: ref.asistente});
+	    		    	if (!(idCache in cachePersonas)) {
+	    		    		var promesa2 = miCache.leer('LEER_PERSONA', {id: idCache});
 		    		    	promesa2.done(agregarReal);
 		    		    	promesa2.always(seguir);
 	    		    	} else {
-	    		    		agregarReal(cachePersonas[ref.asistente]);
+	    		    		agregarReal(cachePersonas[idCache]);
 	    		    		seguir();
 	    		    	}
     		    	}
@@ -824,6 +1021,74 @@ $(function () {
 	    	verTabla_('VER_ASISTENCIA', true, controlesFormulario_, validarFormularioAsistencia_, $('#resultados_busqueda_personas'), null, null, '.tabla_asistencia');
 	    };
 	    
+	    var verParejas_ = function() {
+	    	var todasPersonas = {};
+    		var generadorFila = function(i, fila, elem) {
+    			fila.push({contenido:i, clases:['indice']});
+    			fila.push({contenido:elem.apellidos + ' ' + elem.nombres, clases:['UID-'+elem.cedula]});
+    			fila.push({contenido:elem.pareja, clases:['remplezar_persona_id']});
+    			fila.push({contenido:'<div class="campo_in_tabla">&nbsp;</div>', html:true});
+    			fila.push({contenido:'<div class="campo_in_tabla">&nbsp;</div>', html:true});
+    			fila.push({contenido:'<div class="campo_in_tabla">&nbsp;</div>', html:true});
+    			//Se mapea todas las personas
+    			todasPersonas[elem.cedula] = elem.apellidos+' '+elem.nombres;
+    		};
+    		
+	    	var jTabla = $('#resultados_busqueda_personas');
+	    	
+	    	var funcionFinal = function() {
+	    		$.each(jTabla.find('.remplezar_persona_id'), function(i, noJqueryElem) {
+	    			var elem = $(noJqueryElem);
+	    			if (!elem.closest('tr').hasClass('invisible')) {
+		    			var ident = elem.text();
+		    			var nombre = todasPersonas[ident];
+		    			if (hayValor(nombre)) {
+		    				elem.find('a').text(nombre);
+		    				//Busco la fila que debo borrar
+		    				//jTabla.find('.UID-'+ident).closest('tr').remove();
+		    				jTabla.find('.UID-'+ident).closest('tr').addClass('invisible');
+		    			}
+	    			}
+	    		});
+	    		var contador = 0;
+	    		$.each(jTabla.find('tbody tr'), function(i, elem) {
+	    			if (!$(elem).hasClass('invisible')) {
+	    				$($(elem).find('td:nth-child(1)')).text(contador+1);
+	    				contador++;
+	    			}
+	    		});
+	    		
+	    		//Se debe registrar el reporte
+    			var nuevaTabla = $('<div><table style="width:100%;">'+$('#resultados_busqueda_personas').html()+'</table></div>');
+    			nuevaTabla.find('.quitarenreporte').remove();
+    			nuevaTabla.find('.invisible').remove();
+    			var titulo = 'Reporte para integración';
+    			asignarContenidoReporte({
+    				subject:{
+    					contenido:titulo
+    				},contenido:{
+	    				contenido:nuevaTabla.html(), 
+	    				html:true
+    				}, descripcion:{
+    					contenido:titulo
+    				},titulo:{
+    					contenido:'Reporte para integración'
+    				}
+    			});
+	    	};
+	    	
+	    	var promesa = verTabla_('VER_TODOS', 
+	    			false, 
+	    			controlesFormulario_, 
+	    			validarFormularioAsistencia_, 
+	    			jTabla, 
+	    			null, 
+	    			generadorFila, 
+	    			'.tabla_parejas',
+	    			funcionFinal);
+	    	promesa.done(funcionFinal);
+	    };
+	    
 	    var verCumple_ = function() {
 	    	var fecha = new Date();
 	    	var todasPersonas = {};
@@ -852,8 +1117,8 @@ $(function () {
 	    			//Se mapea todas las personas
 	    			todasPersonas[elem.cedula] = elem.apellidos+' '+elem.nombres;
 	    		};
-		    	var promesa = verTabla_('VER_TODOS', false, controlesFormulario_, validarFormularioAsistencia_, jTabla, null, generadorFila, '.tabla_cumple');
-		    	promesa.done(function() {
+	    		
+	    		var funcionaFinal = function() {
 		    		//Se debe buscar y remplazar el nombre del conyugue
 		    		$.each(jTabla.find('.remplezar_persona_id'), function(i, noJqueryElem) {
 		    			var elem = $(noJqueryElem);
@@ -861,7 +1126,7 @@ $(function () {
 		    			
 		    			var nombre = todasPersonas[ident];
 		    			if (hayValor(nombre)) {
-		    				elem.text(nombre);
+		    				elem.find('a').text(nombre);
 		    			}
 		    		});
 		    		
@@ -895,7 +1160,18 @@ $(function () {
 	    					contenido:'Reporte de cumpleaños'
 	    				}
 	    			});
-		    	});
+		    	};
+	    		
+		    	var promesa = verTabla_('VER_TODOS', 
+		    			false, 
+		    			controlesFormulario_, 
+		    			validarFormularioAsistencia_, 
+		    			jTabla, 
+		    			null, 
+		    			generadorFila, 
+		    			'.tabla_cumple',
+		    			funcionaFinal);
+		    	promesa.done(funcionaFinal);
 	    	});
 	    };
 	    
@@ -908,9 +1184,9 @@ $(function () {
 	    			mapaAsistentes[listaAsistentes[i].asistente] = true;
 	    		}
 	    		var estados = {
-					0:'<span class="label label-danger">Faltó</span>',
-					1:'<span class="label label-success">Presente</span>',
-					2:'<span class="label label-primary">Nuevo</span>',
+					0:'<span class="label label-danger esfaltante">Faltó</span>',
+					1:'<span class="label label-success esasistente">Presente</span>',
+					2:'<span class="label label-primary esnuevo">Es Nuevo</span>',
 	    		};
 	    		var ctrl = controlesFormulario_();
 	    		var fecha = new Date(ctrl.fecha.leer());
@@ -939,8 +1215,8 @@ $(function () {
 	    			fila.push({contenido:elem.cedula});
 	    			fila.push({contenido:estados[calcularEstado(elem)], html:true});
 	    		};
-	    		var promesa2 = verTabla_('VER_TODOS', false, controlesFormulario_, validarFormularioAsistencia_, $('#resultados_busqueda_personas'), null, generadorFila, '.tabla_asistencia');
-	    		promesa2.done(function() {
+	    		
+	    		var alFinal = function() {
 	    			var nuevaTabla = $('<div><table style="width:100%;">'+$('#resultados_busqueda_personas').html()+'</table></div>');
 	    			nuevaTabla.find('.quitarenreporte').remove();
 	    			var titulo = 'Asistentes el día '+formatearFecha(fecha.getTime());
@@ -956,7 +1232,27 @@ $(function () {
 	    					contenido:'Reporte de asistencia'
 	    				}
 	    			});
-	    		})
+	    		};
+	    		
+	    		var promesa2 = verTabla_('VER_TODOS', 
+	    				false, 
+	    				controlesFormulario_, 
+	    				validarFormularioAsistencia_, 
+	    				$('#resultados_busqueda_personas'), 
+	    				null, 
+	    				generadorFila, 
+	    				'.tabla_asistencia', 
+	    				alFinal);
+	    		promesa2.done(alFinal)
+	    		promesa2.done(function() {
+	    			mensajeGeneral(
+	    					'Presentes (sin nuevos): '+$('.esasistente').length+' <br/>'+
+	    					'Nuevos: '+$('.esnuevo').length+' <br/>'+
+	    					'Faltantes: '+$('.esfaltante').length+' <br/>'
+	    					, null, true);
+	    			
+	    			
+	    		});
 	    	});
 	    };
 	    
@@ -970,6 +1266,7 @@ $(function () {
 	    	verAsistencia: verAsistencia_,
 	    	verNuevos: verNuevos_,
 	    	verCumple: verCumple_,
+	    	verParejas: verParejas_,
 	    };
     }();
     
@@ -1210,6 +1507,8 @@ $(function () {
     		VER_NUEVOS: {url:'/asistencia/?accion=vernuevos', tipo:'PUT', dataType:'json'},
     		ENVIAR_REPORTE: {url:'/asistencia/?accion=enviarreporte', tipo:'PUT', dataType:'json'},
     		VER_MONITORES: {url:'/asistencia/?accion=vermonitores', tipo:'PUT', dataType:'json'},
+    		PEDIR_ACTUALIZAR: {url:'/asistencia/?accion=pedir-actualizar', tipo:'PUT', dataType:'json'},
+    		TEMPLATE_CORREO:{url:'/assets/templates/simple/htmls/correo.html', tipo:'GET'}
     	};
     	var pendientes = 0;
     	
@@ -1246,7 +1545,7 @@ $(function () {
     		$.ajax({
       		  type: peticion.tipo,
       		  contentType: 'application/json; charset=utf-8',
-      		  url: peticion.url+'&t='+new Date().getTime(),
+      		  url: peticion.url+(peticion.url.indexOf('?')<0?'?':'&')+'t='+new Date().getTime(),
       		  data: hayValor(data)?JSON.stringify(data):null,
       		  error: function(data) {
       			mensajeErrorSistema();

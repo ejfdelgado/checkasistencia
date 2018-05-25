@@ -75,3 +75,22 @@ button {
 		width:30%;
 	}
 }
+
+.correo-enviado {
+	background-color: #cbe0ff !important;
+}
+
+.correo-fallido {
+	background-color: #ffd6c7 !important;
+}
+
+table thead th {
+	cursor:pointer;
+}
+
+.campo_in_tabla {
+	margin: 0 auto;
+	height: 100%;
+	padding: 10px;
+	border: 1px solid;
+}

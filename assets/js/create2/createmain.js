@@ -128,7 +128,7 @@
 			objeto.find('[textplain="true"]').each(function (index, element) {
 				var actual = $(element);
 				if(actual.attr("act_tpl") !== "ok") {
-					actual.on('change keyup paste', function() {
+					actual.on('blur', function() {
 						actual.html(actual.text());
 					});
 					actual.attr("act_tpl", "ok");
